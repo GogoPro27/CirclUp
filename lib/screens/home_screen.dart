@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../models/event.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -10,6 +11,37 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late TransformationController _controller;
   late double _scale;
+
+  // Event list
+  final List<Event> allEvents = [
+    Event(
+      name: 'Stanica 26',
+      description: 'A vibrant event center.',
+      type: 'event center',
+      attendees: 150,
+      x: 3500,
+      y: 1100,
+      imagePath: 'assets/stanica.jpeg',
+    ),
+    Event(
+      name: 'Kotur',
+      description: 'A cozy bar.',
+      type: 'bar',
+      attendees: 75,
+      x: 3185,
+      y: 1683,
+      imagePath: 'assets/kotur.png',
+    ),
+    Event(
+      name: 'Papillon',
+      description: 'A trendy cafe.',
+      type: 'cafe',
+      attendees: 40,
+      x: 3588,
+      y: 2011,
+      imagePath: 'assets/papillon.png',
+    ),
+  ];
 
   @override
   void initState() {
@@ -30,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // Constrained scrollable map
+          // Map and markers
           ClipRect(
             child: InteractiveViewer(
               transformationController: _controller,
@@ -39,13 +71,25 @@ class _HomeScreenState extends State<HomeScreen> {
               minScale: _scale,
               maxScale: _scale,
               scaleEnabled: false, // Disable manual zooming
-              child: SizedBox(
-                width: 8192, // Full map width
-                height: 3993, // Full map height
-                child: Image.asset(
-                  'assets/skopje_map.jpg', // Your map file
-                  fit: BoxFit.cover,
-                ),
+              child: Stack(
+                children: [
+                  // The map image
+                  SizedBox(
+                    width: 8192, // Full map width
+                    height: 3993, // Full map height
+                    child: Image.asset(
+                      'assets/skopje_map.jpg',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  // Dynamic markers
+                  for (var event in allEvents)
+                    Positioned(
+                      left: event.x,
+                      top: event.y,
+                      child: MarkerButton(imagePath: event.imagePath),
+                    ),
+                ],
               ),
             ),
           ),
@@ -91,6 +135,45 @@ class _HomeScreenState extends State<HomeScreen> {
                     break;
                 }
               },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MarkerButton extends StatelessWidget {
+  final String imagePath;
+
+  const MarkerButton({Key? key, required this.imagePath}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        print('Marker tapped!');
+      },
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            width: 100,
+            height: 130,
+            decoration: BoxDecoration(
+              color: Colors.orange,
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          Positioned(
+            top: 8,
+            child: ClipOval(
+              child: Image.asset(
+                imagePath,
+                width: 70,
+                height: 70,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
         ],
