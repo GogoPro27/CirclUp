@@ -1,16 +1,22 @@
-import 'package:circl_up_app/utils/constants.dart';
 import 'package:flutter/material.dart';
+import '../models/event.dart';
+import '../screens/event_details_screen.dart';
 
 class MarkerButton extends StatelessWidget {
-  final String imagePath;
+  final Event event;
 
-  const MarkerButton({Key? key, required this.imagePath}) : super(key: key);
+  const MarkerButton({Key? key, required this.event}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        print('Marker tapped!');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EventDetailsScreen(event: event),
+          ),
+        );
       },
       child: Stack(
         alignment: Alignment.center,
@@ -19,7 +25,7 @@ class MarkerButton extends StatelessWidget {
             width: 100,
             height: 130,
             decoration: BoxDecoration(
-              color: kPrimaryColor,
+              color: Colors.orange,
               borderRadius: BorderRadius.circular(10),
             ),
           ),
@@ -27,7 +33,7 @@ class MarkerButton extends StatelessWidget {
             top: 8,
             child: ClipOval(
               child: Image.asset(
-                imagePath,
+                event.imagePath,
                 width: 70,
                 height: 70,
                 fit: BoxFit.cover,
