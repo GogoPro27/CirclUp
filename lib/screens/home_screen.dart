@@ -120,7 +120,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     Positioned(
                       left: event.x,
                       top: event.y,
-                      child: MarkerButton(event: event), // Pass event to MarkerButton
+                      child: MarkerButton(
+                        event: event,
+                        onParticipationChanged: () {
+                          setState(() {}); // Refresh the UI
+                        },
+                      ),
                     ),
                 ],
               ),
