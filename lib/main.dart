@@ -1,3 +1,4 @@
+import 'package:circl_up_app/widgets/instagram_style_navigation.dart';
 import 'package:flutter/material.dart';
 import 'data/mock_data.dart';
 import 'utils/constants.dart';
@@ -29,8 +30,7 @@ class MyApp extends StatelessWidget {
           unselectedItemColor: kSecondaryColor,
         ),
       ),
-      initialRoute: '/', // Define the initial route
-      onGenerateRoute: RouteGenerator.generateRoute, // Use the route generator
+       home: InstagramStyleNavigation(), // Set the new navigation as the home
     );
   }
 }
