@@ -1,3 +1,5 @@
+import 'package:circl_up_app/models/coupon.dart';
+
 import '../models/event.dart';
 import '../models/place.dart';
 import '../models/user.dart';
@@ -101,3 +103,24 @@ void initializeUserFriends() {
   mockUsers[2].friends.add(mockUsers[0]); // John is friends with Nidzo
 }
 
+
+final List<Coupon> mockCoupons = [
+  Coupon(
+    description: 'Ananas Gift Card worth 1000 den.',
+    photo: 'assets/ananas.png',
+    cost: 800,
+    qrCode: 'assets/qr.png',
+  ),
+  Coupon(
+    description: 'Buy Prime Subscription for 1000 circles',
+    photo: 'assets/ananas.png',
+    cost: 1000,
+    qrCode: 'assets/qr.png',
+  ),
+  Coupon(
+    description: 'Burger King Coupon worth 500 den.',
+    photo: 'assets/burger_king.png',
+    cost: 300,
+    qrCode: 'assets/qr.png',
+  ),
+];
