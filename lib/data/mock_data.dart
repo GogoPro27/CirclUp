@@ -9,7 +9,7 @@ final List<Event> mockEvents = [
     x: 3500,
     y: 1100,
     imagePath: 'assets/stanica.jpeg',
-    photoUrl: 'assets/stanica_zgrada.jpg', // Updated photo path
+    photoUrl: 'assets/stanica_zgrada.jpg',
   ),
   Event(
     name: 'Kotur',
@@ -19,7 +19,7 @@ final List<Event> mockEvents = [
     x: 3185,
     y: 1683,
     imagePath: 'assets/kotur.png',
-    photoUrl: 'assets/stanica_zgrada.jpg', // Updated photo path
+    photoUrl: 'assets/stanica_zgrada.jpg',
   ),
   Event(
     name: 'Papillon',
@@ -29,6 +29,6 @@ final List<Event> mockEvents = [
     x: 3588,
     y: 2011,
     imagePath: 'assets/papillon.png',
-    photoUrl: 'assets/stanica_zgrada.jpg', // Updated photo path
+    photoUrl: 'assets/stanica_zgrada.jpg',
   ),
 ];
