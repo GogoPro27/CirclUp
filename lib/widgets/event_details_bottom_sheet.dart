@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../models/event.dart';
+import '../data/mock_data.dart';
 
 class EventDetailsBottomSheet extends StatefulWidget {
   final Event event;
-  final VoidCallback onParticipationChanged; // Callback to notify changes
+  final VoidCallback onParticipationChanged;
 
   const EventDetailsBottomSheet({
     Key? key,
@@ -12,12 +13,16 @@ class EventDetailsBottomSheet extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<EventDetailsBottomSheet> createState() => _EventDetailsBottomSheetState();
+  State<EventDetailsBottomSheet> createState() =>
+      _EventDetailsBottomSheetState();
 }
 
 class _EventDetailsBottomSheetState extends State<EventDetailsBottomSheet> {
   @override
   Widget build(BuildContext context) {
+    // Check if the place is liked by the user
+    bool isLiked = mockUsers[0].favoritePlaces.contains(widget.event.place);
+
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: const BoxDecoration(
@@ -31,6 +36,7 @@ class _EventDetailsBottomSheetState extends State<EventDetailsBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          // Event Image
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Image.asset(
@@ -40,27 +46,56 @@ class _EventDetailsBottomSheetState extends State<EventDetailsBottomSheet> {
             ),
           ),
           const SizedBox(height: 16),
-          Text(
-            widget.event.place.name,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
+          // Event Name with Like Button
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const SizedBox(width: 48), // Spacer for alignment
+              Expanded(
+                child: Text(
+                  widget.event.place.name,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              IconButton(
+                icon: Icon(
+                  isLiked ? Icons.favorite : Icons.favorite_border,
+                  color: isLiked ? Colors.red : Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    if (isLiked) {
+                      // Remove from favorites if unliked
+                      mockUsers[0].favoritePlaces.remove(widget.event.place);
+                    } else {
+                      // Add to favorites if liked
+                      mockUsers[0].favoritePlaces.add(widget.event.place);
+                    }
+                  });
+                },
+              ),
+            ],
           ),
           const SizedBox(height: 8),
+          // Event Time
           Text(
             '07.01.2024\n23:00 - 02:00',
             style: const TextStyle(fontSize: 14, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
+          // Event Description
           Text(
             widget.event.description,
             style: const TextStyle(fontSize: 16),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
+          // Participate Button
           ElevatedButton(
             onPressed: () {
               setState(() {
@@ -90,7 +125,8 @@ class _EventDetailsBottomSheetState extends State<EventDetailsBottomSheet> {
             child: Text(
               widget.event.isParticipating ? "CANCEL" : "PARTICIPATE",
               style: TextStyle(
-                color: widget.event.isParticipating ? Colors.orange : Colors.white,
+                color:
+                widget.event.isParticipating ? Colors.orange : Colors.white,
               ),
             ),
           ),
