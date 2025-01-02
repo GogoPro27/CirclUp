@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'data/mock_data.dart';
 import 'utils/constants.dart';
 import 'screens/home_screen.dart';
 import 'navigation/route_generator.dart'; // Import the route generator
 
 void main() {
+  initializeUserFriends();
   runApp(const MyApp());
 }
 
