@@ -48,7 +48,7 @@ class MarkerButton extends StatelessWidget {
             top: 50,
             child: ClipOval(
               child: Image.asset(
-                event.imagePath,
+                event.place.logo,
                 width: 80,
                 height: 80,
                 fit: BoxFit.cover,

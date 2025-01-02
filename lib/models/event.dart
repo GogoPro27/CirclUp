@@ -1,23 +1,17 @@
+import 'place.dart';
+
 class Event {
-  final String name;
-  final String description;
-  final String type;
-  int attendees;
-  final double x;
-  final double y;
-  final String imagePath;
-  final String photoUrl;
-  bool isParticipating; // New property
+  final String description; // Description of the event
+  int attendees; // Number of attendees
+  bool isParticipating; // Whether the user is participating
+  final Place place; // Associated place for the event
+  final String eventImage; // Event-specific image
 
   Event({
-    required this.name,
     required this.description,
-    required this.type,
     required this.attendees,
-    required this.x,
-    required this.y,
-    required this.imagePath,
-    required this.photoUrl,
-    this.isParticipating = false, // Default value
+    this.isParticipating = false,
+    required this.place,
+    required this.eventImage, // New property
   });
 }

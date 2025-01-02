@@ -5,6 +5,6 @@ class FilterService {
     if (filters['All'] == true) {
       return events;
     }
-    return events.where((event) => filters[event.type] == true).toList();
+    return events.where((event) => filters[event.place.type] == true).toList();
   }
 }
