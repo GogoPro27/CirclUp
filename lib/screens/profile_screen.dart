@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import '../data/mock_data.dart';
 import '../models/user.dart';
 import '../widgets/navigation_bar.dart';
+import 'favorites_screen.dart';
+import 'friends_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final User user = mockUsers[0]; // Use mockUsers[0] as the main demo user
+    final User user = mockUsers[0]; // Use the first user as the profile demo user
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -27,53 +29,17 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 // Profile Picture
                 Positioned(
-                  bottom: -50, // Adjusted to ensure full visibility
-                  left: MediaQuery.of(context).size.width / 2 - 60,
-                  child: GestureDetector(
-                    onTap: () {
-                      // Fullscreen profile picture dialog
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return Dialog(
-                            backgroundColor: Colors.transparent,
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Image.asset(
-                                  user.profilePicture,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    child: CircleAvatar(
-                      radius: 60, // Increased size for better visibility
-                      backgroundImage: AssetImage(user.profilePicture),
-                      child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: CircleAvatar(
-                          radius: 14,
-                          backgroundColor: Colors.white,
-                          child: CircleAvatar(
-                            radius: 12,
-                            backgroundColor: Colors.green, // Online status indicator
-                          ),
-                        ),
-                      ),
-                    ),
+                  bottom: -40,
+                  left: MediaQuery.of(context).size.width / 2 - 50,
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: AssetImage(user.profilePicture),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 70), // Adjusted to provide more spacing
-            // User Details (Name, Bio, Location, and Coins)
+            const SizedBox(height: 50), // Space below profile picture
+            // User Details (Name, Bio, Coins)
             Column(
               children: [
                 Text(
@@ -85,13 +51,7 @@ class ProfileScreen extends StatelessWidget {
                   user.bio,
                   style: const TextStyle(fontSize: 16, color: Colors.grey),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  "🏀 MZT • Skopje, N.Macedonia", // Replace with dynamic location if needed
-                  style: const TextStyle(fontSize: 14, color: Colors.grey),
-                ),
                 const SizedBox(height: 10),
-                // Coins Count
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
@@ -112,32 +72,60 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 20),
             // Friends and Favorites Buttons
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // Friends Button
                 GestureDetector(
                   onTap: () {
-                    // Navigate to Friends Screen (to be implemented)
+                    // Navigate to Friends Screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FriendsScreen(user: user),
+                      ),
+                    );
                   },
-                  child: Column(
-                    children: [
-                      const Icon(Icons.people, size: 28, color: Colors.black),
-                      const SizedBox(height: 4),
-                      Text("Friends (${user.friends.length})"),
-                    ],
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.people, color: Colors.black),
+                        const SizedBox(width: 8),
+                        Text("Friends (${user.friends.length})"),
+                      ],
+                    ),
                   ),
                 ),
                 // Favorites Button
                 GestureDetector(
                   onTap: () {
-                    // Navigate to Favorites Screen (to be implemented)
+                    // Navigate to Favorites Screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FavoritesScreen(user: user),
+                      ),
+                    );
                   },
-                  child: Column(
-                    children: [
-                      const Icon(Icons.favorite, size: 28, color: Colors.red),
-                      const SizedBox(height: 4),
-                      Text("Favorites (${user.favoritePlaces.length})"),
-                    ],
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.favorite, color: Colors.red),
+                        const SizedBox(width: 8),
+                        Text("Favorites (${user.favoritePlaces.length})"),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -196,7 +184,8 @@ class ProfileScreen extends StatelessWidget {
         onTap: (index) {
           switch (index) {
             case 0:
-            // Stay on the home screen
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/', (Route<dynamic> route) => false);
               break;
             case 1:
               Navigator.pushNamed(context, '/rewards');
