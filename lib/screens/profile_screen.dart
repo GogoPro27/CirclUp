@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/mock_data.dart';
 import '../models/user.dart';
-import '../widgets/navigation_bar.dart';
 import 'favorites_screen.dart';
 import 'friends_screen.dart';
 
@@ -154,11 +153,11 @@ class ProfileScreen extends StatelessWidget {
                           user.posts[index],
                           fit: BoxFit.cover,
                         ),
-                        Positioned(
+                        const Positioned(
                           bottom: 8,
                           right: 8,
                           child: Row(
-                            children: const [
+                            children: [
                               Icon(Icons.favorite, color: Colors.white, size: 16),
                               SizedBox(width: 4),
                               Text(
@@ -179,25 +178,6 @@ class ProfileScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: CustomNavigationBar(
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamedAndRemoveUntil(
-                  context, '/', (Route<dynamic> route) => false);
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/rewards');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/notifications');
-              break;
-            case 3:
-              Navigator.pushNamed(context, '/profile');
-              break;
-          }
-        },
       ),
     );
   }

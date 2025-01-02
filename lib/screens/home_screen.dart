@@ -4,7 +4,7 @@ import '../data/mock_data.dart';
 import '../models/event.dart';
 import '../widgets/marker_button.dart';
 import '../widgets/filter_button.dart';
-import '../widgets/navigation_bar.dart';
+import '../utils/map_controller.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -14,7 +14,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // Define mockFilters to manage filter states
   final Map<String, bool> mockFilters = {
     'All': true,
     'event center': true,
@@ -22,23 +21,8 @@ class _HomeScreenState extends State<HomeScreen> {
     'cafe': true,
   };
 
-  late TransformationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TransformationController();
-    _controller.value = Matrix4.identity()..scale(0.4);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
- 
-  // Getter to filter events based on selected filters
-  List<Event> get filteredEvents => FilterService.applyFilters(mockEvents, mockFilters);
+  List<Event> get filteredEvents =>
+      FilterService.applyFilters(mockEvents, mockFilters);
 
   void _showFilterDialog(BuildContext context) {
     showDialog(
@@ -71,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mockFilters.values.every((v) => v);
                             }
                           });
-                          setState(() {}); // Update the main UI
+                          setState(() {});
                         },
                       ),
                     ],
@@ -100,9 +84,8 @@ class _HomeScreenState extends State<HomeScreen> {
         bottom: false,
         child: Stack(
           children: [
-            // Map and markers
             InteractiveViewer(
-              transformationController: _controller,
+              transformationController: mapController.transformationController,
               constrained: false,
               boundaryMargin: EdgeInsets.zero,
               minScale: 0.4,
@@ -123,14 +106,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: MarkerButton(
                         event: event,
                         onParticipationChanged: () {
-                          setState(() {}); // Refresh the UI
+                          setState(() {});
                         },
                       ),
                     ),
                 ],
               ),
             ),
-            // Top filter button
             Positioned(
               top: 10,
               left: 300,
@@ -143,24 +125,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: CustomNavigationBar( 
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              // Stay on the home screen
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/rewards');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/notifications');
-              break;
-            case 3:
-              Navigator.pushNamed(context, '/profile');
-              break;
-          }
-        },
       ),
     );
   }
