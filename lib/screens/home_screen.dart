@@ -118,8 +118,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   for (var event in filteredEvents)
                     Positioned(
-                      left: event.x,
-                      top: event.y,
+                      left: event.place.x,
+                      top: event.place.y,
                       child: MarkerButton(
                         event: event,
                         onParticipationChanged: () {

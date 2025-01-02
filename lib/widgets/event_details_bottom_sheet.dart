@@ -34,14 +34,14 @@ class _EventDetailsBottomSheetState extends State<EventDetailsBottomSheet> {
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Image.asset(
-              widget.event.photoUrl,
+              widget.event.eventImage,
               height: 200,
               fit: BoxFit.cover,
             ),
           ),
           const SizedBox(height: 16),
           Text(
-            widget.event.name,
+            widget.event.place.name,
             style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,

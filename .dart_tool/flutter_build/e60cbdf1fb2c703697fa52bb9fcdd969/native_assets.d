@@ -1,0 +1,1 @@
+ D:\\Nikola\\Faks\ semestar\ 5\\CirclUp\\.dart_tool\\flutter_build\\e60cbdf1fb2c703697fa52bb9fcdd969\\native_assets.yaml: 
