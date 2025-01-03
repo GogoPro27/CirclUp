@@ -124,3 +124,54 @@ final List<Coupon> mockCoupons = [
     qrCode: 'assets/qr.png',
   ),
 ];
+
+class NotificationItem {
+  final String message;
+  final String timestamp;
+  final String? profilePicture; // Optional for user profile pictures
+  final bool isActionable; // For Accept/Decline buttons
+  final bool isSponsored; // For sponsored content
+
+  NotificationItem({
+    required this.message,
+    required this.timestamp,
+    this.profilePicture,
+    this.isActionable = false,
+    this.isSponsored = false,
+  });
+}
+
+final List<NotificationItem> mockNotifications = [
+  NotificationItem(
+    message: "Samantha Phil requested to join your circle!",
+    timestamp: "2m",
+    profilePicture: "assets/samantha_picture.png",
+    isActionable: true,
+  ),
+  NotificationItem(
+    message: "You have received 100 circles from circl'in up with 2 people.",
+    timestamp: "2h",
+    profilePicture: "assets/stanica.jpeg",
+  ),
+  NotificationItem(
+    message: "John Doe thinks your photo is great!",
+    timestamp: "40m",
+    profilePicture: "assets/john_picture.png",
+  ),
+  NotificationItem(
+    message: "John Doe accepted you in their circle.",
+    timestamp: "1h",
+    profilePicture: "assets/john_picture.png",
+  ),
+  NotificationItem(
+    message: "Unforgettable night at Stanica 26 on 07.01 at 11pm.",
+    timestamp: "2h",
+    profilePicture: "assets/stanica.jpeg",
+  ),
+  NotificationItem(
+    message: "Cocktails night at Kotur tonight, all drinks are 20% off.",
+    timestamp: "3h",
+    profilePicture: "assets/kotur.png",
+    isSponsored: true,
+  ),
+];
