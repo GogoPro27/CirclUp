@@ -30,7 +30,8 @@ class MyApp extends StatelessWidget {
           unselectedItemColor: kSecondaryColor,
         ),
       ),
-       home: InstagramStyleNavigation(), // Set the new navigation as the home
+      initialRoute: '/',
+      onGenerateRoute: RouteGenerator.generateRoute, // Add this
     );
   }
 }
