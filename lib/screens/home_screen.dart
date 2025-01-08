@@ -1,3 +1,4 @@
+import 'package:circl_up_app/screens/match_page.dart';
 import 'package:circl_up_app/services/filter_service.dart';
 import 'package:flutter/material.dart';
 import '../data/mock_data.dart';
@@ -208,9 +209,13 @@ class _HomeScreenState extends State<HomeScreen>
               top: 20,
               left: 20,
               child: GestureDetector(
-                onTap: () {
-                  print("Cupp_pair clicked!");
-                },
+                onTap: _showRedDot
+                    ? () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const MatchPage()),
+                        );
+                      }
+                    : null, // Only allow navigation when red dot is visible
                 child: Stack(
                   children: [
                     Image.asset(

@@ -1,3 +1,5 @@
+import 'package:circl_up_app/screens/group_chat_page.dart';
+import 'package:circl_up_app/screens/match_page.dart';
 import 'package:flutter/material.dart';
 import 'package:circl_up_app/screens/home_screen.dart';
 import 'package:circl_up_app/screens/rewards_screen.dart';
@@ -15,6 +17,10 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const NotificationsScreen());
       case '/profile':
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
+      case '/match':
+        return MaterialPageRoute(builder: (_) => const MatchPage());
+      case '/group-chat':
+        return MaterialPageRoute(builder: (_) => const GroupChatPage());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
