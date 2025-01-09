@@ -1,8 +1,15 @@
+import 'package:circl_up_app/screens/camera_page.dart';
 import 'package:flutter/material.dart';
+import '../utils/constants.dart';
 
-class MatchPage extends StatelessWidget {
+class MatchPage extends StatefulWidget {
   const MatchPage({Key? key}) : super(key: key);
 
+  @override
+  _MatchPageState createState() => _MatchPageState();
+}
+
+class _MatchPageState extends State<MatchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +25,6 @@ class MatchPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Circular logo
           const CircleAvatar(
             radius: 50,
             backgroundColor: Colors.orange,
@@ -32,8 +38,6 @@ class MatchPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-
-          // Main heading
           const Text(
             'You have been\nCIRCL’d UP',
             textAlign: TextAlign.center,
@@ -43,16 +47,12 @@ class MatchPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-
-          // Subheading
           const Text(
             'Take a picture with the following people to receive your points!',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 16, color: Colors.grey),
           ),
           const SizedBox(height: 30),
-
-          // List of users
           const ListTile(
             leading: CircleAvatar(
               backgroundImage: AssetImage('assets/samantha_picture.png'),
@@ -66,38 +66,33 @@ class MatchPage extends StatelessWidget {
             title: Text("John Doe"),
           ),
           const SizedBox(height: 40),
-
-          // Buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              // Group Chat Button
-              Column(
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed('/group-chat');
-                    },
-                    icon: const Icon(Icons.chat_bubble),
-                    label: const Text("Group Chat"),
+          if (!isPhotoCapturedGlobal)
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => CameraPage(
+                      onPhotoCaptured: () {
+                        setState(() {
+                          isPhotoCapturedGlobal = true;
+                        });
+                      },
+                    ),
                   ),
-                ],
+                );
+              },
+              icon: const Icon(Icons.camera_alt),
+              label: const Text("Take Photo"),
+            )
+          else
+            const Text(
+              '1/3 successfully uploaded',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
               ),
-              // Take Photo Button
-              const Column(
-                children: [
-                  IconButton(
-                    onPressed: null, // Disabled for now
-                    icon: Icon(Icons.camera_alt, color: Colors.orange),
-                  ),
-                  Text("Take Photo"),
-                ],
-              ),
-            ],
-          ),
+            ),
           const SizedBox(height: 30),
-
-          // Circles points
           const Text(
             '100 CIRCLES',
             style: TextStyle(
@@ -105,6 +100,14 @@ class MatchPage extends StatelessWidget {
               fontWeight: FontWeight.bold,
               color: Colors.orange,
             ),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.of(context).pushNamed('/group-chat');
+            },
+            icon: const Icon(Icons.chat),
+            label: const Text("Group Chat"),
           ),
         ],
       ),
