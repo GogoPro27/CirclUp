@@ -1,3 +1,4 @@
+import 'package:circl_up_app/screens/your_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'setting_screen.dart';
 
@@ -98,11 +99,15 @@ class _EditScreenState extends State<EditScreen> {
                 _buildEditOption(
                   context,
                   icon: Icons.person,
-                  title: 'Edit Your Profile',
+                  title: 'Your Profile',
                   onTap: () {
-                    // Navigate to edit profile details
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const YourProfileScreen()),
+                    );
                   },
                 ),
+
                 _buildEditOption(
                   context,
                   icon: Icons.settings,

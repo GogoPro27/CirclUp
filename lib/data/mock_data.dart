@@ -62,6 +62,10 @@ final List<User> mockUsers = [
     profilePicture: 'assets/nidzo_picture.png',
     coverPhoto: 'assets/mzt.png',
     bio: "Аеродром во душа",
+    phoneNumber: "+389 71111111",
+    email: "nidzo.aerodrom@example.com",
+    gender: "Male",
+    dateOfBirth: DateTime(1997, 8, 12),
     coins: 1440,
     friends: [], // Initialize as empty
     posts: [
@@ -78,6 +82,10 @@ final List<User> mockUsers = [
     profilePicture: 'assets/samantha_picture.png',
     coverPhoto: '',
     bio: "Lover of bar trivia nights and relaxing cafes.",
+    phoneNumber: "+389 72222222",
+    email: "samantha.phil@example.com",
+    gender: "Female",
+    dateOfBirth: DateTime(1995, 3, 22),
     coins: 200,
     friends: [], // Initialize as empty
     posts: [],
@@ -88,12 +96,17 @@ final List<User> mockUsers = [
     profilePicture: 'assets/john_picture.png',
     coverPhoto: 'assets/alice_cover.jpg',
     bio: "Explorer of hidden gems in the city.",
+    phoneNumber: "+389 73333333",
+    email: "john.doe@example.com",
+    gender: "Male",
+    dateOfBirth: DateTime(1988, 11, 5),
     coins: 50,
     friends: [], // Initialize as empty
     posts: [],
     favoritePlaces: [],
   ),
 ];
+
 
 // Function to Initialize Friends
 void initializeUserFriends() {

@@ -6,13 +6,11 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = mockUsers[0]; // Demo user
+    final user = mockUsers[0];
 
     return Scaffold(
-      // Keeping this if you want the cover photo behind the AppBar:
       extendBodyBehindAppBar: true,
 
-      // 1) Put the Settings icon in AppBar.actions for guaranteed click
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

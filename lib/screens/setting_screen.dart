@@ -8,7 +8,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  int _selectedIndex = 1; // Default to settings tab
+  int _selectedIndex = 3; // Default to Account tab (adjust index based on your navigation)
 
   void _onItemTapped(int index) {
     if (index == 1) return; // Stay on the SettingsScreen
@@ -50,10 +50,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           _buildSettingsOption(
             context,
-            icon: Icons.notifications,
-            title: 'Notification Settings',
+            icon: Icons.account_circle,
+            title: 'Account Settings', // Updated to match your need
             onTap: () {
-              // Navigate to Notification Settings
+              // Navigate to Account Settings
             },
           ),
           _buildSettingsOption(
@@ -83,7 +83,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             label: 'Map',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
+            icon: Icon(Icons.card_giftcard),
             label: 'Settings',
           ),
           BottomNavigationBarItem(
@@ -91,8 +91,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             label: 'Notifications',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+            icon: Icon(Icons.person), // Updated icon to Account
+            label: 'Profile', // Updated label to Account
           ),
         ],
       ),
@@ -113,3 +113,4 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 }
+
