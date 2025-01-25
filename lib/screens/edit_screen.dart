@@ -137,7 +137,7 @@ class _EditScreenState extends State<EditScreen> {
                   icon: Icons.privacy_tip_outlined,
                   title: 'Privacy Policy',
                   onTap: () {
-                    // Navigate to privacy policy
+                    Navigator.pushNamed(context, '/privacy-policy'); // Navigate to Privacy Policy screen
                   },
                 ),
                 _buildEditOption(

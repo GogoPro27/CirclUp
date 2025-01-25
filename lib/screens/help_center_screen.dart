@@ -213,7 +213,7 @@ class ContactUsSection extends StatelessWidget {
         ExpansionTile(
           leading: const Icon(Icons.headset_mic, size: 30, color: Colors.grey),
           title: const Text('Customer Service', style: TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: const Text('+38970123123', style: TextStyle(color: Colors.grey)),
+          subtitle: const Text('Call us if you need any help!', style: TextStyle(color: Colors.grey)),
           children: const [
             Padding(
               padding: EdgeInsets.all(16.0),
