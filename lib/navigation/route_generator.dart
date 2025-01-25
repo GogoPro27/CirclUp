@@ -11,6 +11,7 @@ import '../data/mock_data.dart';
 import '../screens/favorites_screen.dart';
 import '../screens/friends_screen.dart';
 import '../screens/edit_screen.dart';
+import '../screens/privaty_policy_screen.dart';
 import '../screens/setting_screen.dart';
 
 class RouteGenerator {
@@ -34,6 +35,8 @@ class RouteGenerator {
         );
       case '/edit':
         return MaterialPageRoute(builder: (_) => const EditScreen());
+      case '/privacy-policy':
+        return MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen());
       case '/settings':
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
       default:
