@@ -1,5 +1,6 @@
 import 'package:circl_up_app/screens/your_profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'help_center_screen.dart';
 import 'setting_screen.dart';
 
 class EditScreen extends StatefulWidget {
@@ -125,7 +126,10 @@ class _EditScreenState extends State<EditScreen> {
                   icon: Icons.help_outline,
                   title: 'Help Center',
                   onTap: () {
-                    // Navigate to Help Center screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const HelpCenterScreen()),
+                    );
                   },
                 ),
                 _buildEditOption(
