@@ -7,6 +7,12 @@ import 'package:circl_up_app/screens/rewards_screen.dart';
 import 'package:circl_up_app/screens/notifications_screen.dart';
 import 'package:circl_up_app/screens/profile_screen.dart';
 
+import '../data/mock_data.dart';
+import '../screens/favorites_screen.dart';
+import '../screens/friends_screen.dart';
+import '../screens/edit_screen.dart';
+import '../screens/setting_screen.dart';
+
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -18,22 +24,24 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const NotificationsScreen());
       case '/profile':
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
-      case '/match':
-        return MaterialPageRoute(builder: (_) => const MatchPage());
-      case '/group-chat':
-        return MaterialPageRoute(builder: (_) => const GroupChatPage());
-      case '/camera':
+      case '/friends':
         return MaterialPageRoute(
-          builder: (_) => CameraPage(
-            onPhotoCaptured: () {
-              // Navigator.of(context).pop();
-            },
-          ),
+          builder: (_) => FriendsScreen(user: mockUsers[0]), // Pass user
         );
+      case '/favorites':
+        return MaterialPageRoute(
+          builder: (_) => FavoritesScreen(user: mockUsers[0]), // Pass user
+        );
+      case '/edit':
+        return MaterialPageRoute(builder: (_) => const EditScreen());
+      case '/settings':
+        return MaterialPageRoute(builder: (_) => const SettingsScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
-            body: Center(child: Text('No route defined for ${settings.name}')),
+            body: Center(
+              child: Text('No route defined for ${settings.name}'),
+            ),
           ),
         );
     }
