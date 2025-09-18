@@ -27,11 +27,11 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
       case '/friends':
         return MaterialPageRoute(
-          builder: (_) => FriendsScreen(user: mockUsers[0]), // Pass user
+          builder: (_) => FriendsScreen(user: mockUsers[0]),
         );
       case '/favorites':
         return MaterialPageRoute(
-          builder: (_) => FavoritesScreen(user: mockUsers[0]), // Pass user
+          builder: (_) => FavoritesScreen(user: mockUsers[0]),
         );
       case '/edit':
         return MaterialPageRoute(builder: (_) => const EditScreen());

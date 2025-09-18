@@ -19,11 +19,11 @@ class CameraPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.flash_on, color: Colors.grey),
-            onPressed: null, // Placeholder for flash functionality
+            onPressed: null,
           ),
           IconButton(
             icon: const Icon(Icons.flip_camera_android, color: Colors.grey),
-            onPressed: null, // Placeholder for switching cameras
+            onPressed: null,
           ),
         ],
       ),
@@ -32,15 +32,15 @@ class CameraPage extends StatelessWidget {
           Expanded(
             child: Center(
               child: Image.asset(
-                'assets/camera_photo.jpg', // Ensure this is added to pubspec.yaml
+                'assets/camera_photo.jpg',
                 fit: BoxFit.cover,
               ),
             ),
           ),
           GestureDetector(
             onTap: () {
-              onPhotoCaptured(); // Notify MatchPage of the photo capture
-              Navigator.of(context).pop(); // Return to MatchPage
+              onPhotoCaptured();
+              Navigator.of(context).pop();
             },
             child: Container(
               margin: const EdgeInsets.all(20),

@@ -1,18 +1,18 @@
 import 'place.dart';
 
 class User {
-  final String name; // Full name
-  final String profilePicture; // Profile picture path
-  final String coverPhoto; // Cover photo path
-  final String bio; // Short bio
-  final String phoneNumber; // User's phone number
-  final String email; // User's email
-  final String gender; // User's gender (e.g., "Male", "Female", "Other")
-  final DateTime dateOfBirth; // User's date of birth
-  int coins; // In-app currency, default is 0
-  final List<User> friends; // List of friends
-  final List<String> posts; // List of photo paths posted on the profile
-  final List<Place> favoritePlaces; // User's liked places
+  final String name;
+  final String profilePicture;
+  final String coverPhoto;
+  final String bio;
+  final String phoneNumber;
+  final String email;
+  final String gender;
+  final DateTime dateOfBirth;
+  int coins;
+  final List<User> friends;
+  final List<String> posts;
+  final List<Place> favoritePlaces;
 
   User({
     required this.name,
@@ -28,4 +28,23 @@ class User {
     required this.posts,
     required this.favoritePlaces,
   });
+
+  factory User.fromMap(Map<String, dynamic> map) {
+    return User(
+      name: (map['name'] ?? '') as String,
+      profilePicture: (map['profilePicture'] ?? '') as String,
+      coverPhoto: (map['coverPhoto'] ?? '') as String,
+      bio: (map['bio'] ?? '') as String,
+      phoneNumber: (map['phoneNumber'] ?? '') as String,
+      email: (map['email'] ?? '') as String,
+      gender: (map['gender'] ?? '') as String,
+      dateOfBirth: DateTime.tryParse(map['dateOfBirth'] ?? '') ?? DateTime.now(),
+      coins: (map['coins'] ?? 0) as int,
+      friends: [], // populate separately if you have user relations
+      posts: List<String>.from(map['posts'] ?? []),
+      favoritePlaces: (map['favoritePlaces'] as List<dynamic>? ?? [])
+          .map((p) => Place.fromMap(p as Map<String, dynamic>))
+          .toList(),
+    );
+  }
 }

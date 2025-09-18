@@ -1,12 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:circl_up_app/navigation/route_generator.dart';
 import 'package:circl_up_app/widgets/instagram_style_navigation.dart';
 import 'data/mock_data.dart';
 import 'utils/constants.dart';
+import 'models/event.dart'; // ✅ Import your Event model
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   initializeUserFriends();
+
   runApp(const MyApp());
+
+  // ====================== DEBUG START ======================
+  // Fetch events AFTER the app starts, so it won’t freeze the UI
+  Future.delayed(Duration.zero, () async {
+    try {
+      final snapshot = await FirebaseFirestore.instance.collection('Events').get();
+      final events = snapshot.docs.map((doc) => Event.fromMap(doc.data())).toList();
+
+      for (var e in events) {
+        print('🔥 Event: ${e.description}');
+        print('   Attendees: ${e.attendees}');
+        print('   Place: ${e.place.name} at (${e.place.x}, ${e.place.y})');
+      }
+    } catch (e) {
+      print('❌ Error fetching events: $e');
+    }
+  });
+  // ====================== DEBUG END ========================
 }
 
 class MyApp extends StatelessWidget {
@@ -21,7 +45,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color.fromARGB(255, 255, 255, 255),
         appBarTheme: const AppBarTheme(
           backgroundColor: kPrimaryColor,
-          foregroundColor: Colors.white, // Text/Icon color
+          foregroundColor: Colors.white,
         ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Color.fromARGB(255, 255, 255, 255),
@@ -29,8 +53,8 @@ class MyApp extends StatelessWidget {
           unselectedItemColor: kSecondaryColor,
         ),
       ),
-      home: InstagramStyleNavigation(), // Use InstagramStyleNavigation here
-      onGenerateRoute: RouteGenerator.generateRoute, // Add this to handle named routes
+      home: InstagramStyleNavigation(),
+      onGenerateRoute: RouteGenerator.generateRoute,
     );
   }
 }

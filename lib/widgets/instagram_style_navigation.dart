@@ -1,10 +1,12 @@
-import 'package:circl_up_app/screens/home_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:circl_up_app/screens/map_screen.dart'; // 👈 Import
 import 'package:circl_up_app/screens/notifications_screen.dart';
 import 'package:circl_up_app/screens/profile_screen.dart';
 import 'package:circl_up_app/screens/rewards_screen.dart';
-import 'package:flutter/material.dart';
 
 class InstagramStyleNavigation extends StatefulWidget {
+  const InstagramStyleNavigation({Key? key}) : super(key: key);
+
   @override
   _InstagramStyleNavigationState createState() =>
       _InstagramStyleNavigationState();
@@ -42,9 +44,9 @@ class _InstagramStyleNavigationState extends State<InstagramStyleNavigation> {
       body: PageView(
         controller: _pageController,
         onPageChanged: _onPageChanged,
-        physics: const NeverScrollableScrollPhysics(), // Disable swipe gesture
+        physics: const NeverScrollableScrollPhysics(),
         children: const [
-          HomeScreen(),
+          MapScreen(),  // 👈 Now first tab is the map
           RewardsScreen(),
           NotificationsScreen(),
           ProfileScreen(),

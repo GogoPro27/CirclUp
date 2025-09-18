@@ -183,7 +183,7 @@ class _AddFriendsScreenState extends State<AddFriendsScreen> {
                                   color: Colors.white, size: 16),
                               SizedBox(width: 4),
                               Text(
-                                "1k", // Example like count
+                                "1k",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 14),
                               ),

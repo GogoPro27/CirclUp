@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "809656187607",
+    "project_id": "circlup-6e52d",
+    "storage_bucket": "circlup-6e52d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:809656187607:android:8dba98c5668f28d4d00e92",
+        "android_client_info": {
+          "package_name": "com.example.circl_up_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "809656187607-3f8g10ilj0kp2lhde1g9dckg3fd226vk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnU1Vpdkrg_DX_6rqZUVIZ_7DUI1Nko0c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "809656187607-3f8g10ilj0kp2lhde1g9dckg3fd226vk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "809656187607-82reotbgl44j46q9o5hc7hn0bncj0k53.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.circlUpApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
