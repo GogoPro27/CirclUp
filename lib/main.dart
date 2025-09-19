@@ -10,27 +10,18 @@ import 'models/event.dart'; // ✅ Import your Event model
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  initializeUserFriends();
+
+  // Load data from Firestore into mock lists before starting the app
+  await loadMockData();
+
+  // Debugging: Print lengths of mock arrays
+  print('mockPlaces length: ${mockPlaces.length}');
+  print('mockEvents length: ${mockEvents.length}');
+  print('mockUsers length: ${mockUsers.length}');
+  print('mockCoupons length: ${mockCoupons.length}');
+  print('mockNotifications length: ${mockNotifications.length}');
 
   runApp(const MyApp());
-
-  // ====================== DEBUG START ======================
-  // Fetch events AFTER the app starts, so it won’t freeze the UI
-  Future.delayed(Duration.zero, () async {
-    try {
-      final snapshot = await FirebaseFirestore.instance.collection('Events').get();
-      final events = snapshot.docs.map((doc) => Event.fromMap(doc.data())).toList();
-
-      for (var e in events) {
-        print('🔥 Event: ${e.description}');
-        print('   Attendees: ${e.attendees}');
-        print('   Place: ${e.place.name} at (${e.place.x}, ${e.place.y})');
-      }
-    } catch (e) {
-      print('❌ Error fetching events: $e');
-    }
-  });
-  // ====================== DEBUG END ========================
 }
 
 class MyApp extends StatelessWidget {

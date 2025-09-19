@@ -1,189 +1,146 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:circl_up_app/models/coupon.dart';
 
 import '../models/event.dart';
+import '../models/notificationItem.dart';
 import '../models/place.dart';
 import '../models/user.dart';
 
-final List<Place> mockPlaces = [
-  Place(
-    name: 'Stanica 26',
-    description: 'A vibrant event center known for nightlife and concerts.',
-    type: 'event center',
-    x: 3500,
-    y: 1100,
-    logo: 'assets/stanica.jpeg',
-  ),
-  Place(
-    name: 'Kotur',
-    description: 'A cozy bar with a unique atmosphere.',
-    type: 'bar',
-    x: 3185,
-    y: 1683,
-    logo: 'assets/kotur.png',
-  ),
-  Place(
-    name: 'Papillon',
-    description: 'A trendy cafe for gatherings.',
-    type: 'cafe',
-    x: 3588,
-    y: 2011,
-    logo: 'assets/papillon.png',
-  ),
-];
+final List<Place> mockPlaces = [];
+final List<Event> mockEvents = [];
+final List<User> mockUsers = [];
+final List<Coupon> mockCoupons = [];
 
-final List<Event> mockEvents = [
-  Event(
-    description: 'An electrifying DJ performance.',
-    attendees: 200,
-    isParticipating: false,
-    place: mockPlaces[0],
-    eventImage: 'assets/stanica_zgrada.jpg',
-  ),
-  Event(
-    description: 'A night full of laughter with top comedians.',
-    attendees: 50,
-    isParticipating: false,
-    place: mockPlaces[1],
-    eventImage: 'assets/stanica_zgrada.jpg',
-  ),
-  Event(
-    description: 'A casual coffee meetup.',
-    attendees: 30,
-    isParticipating: false,
-    place: mockPlaces[2],
-    eventImage: 'assets/stanica_zgrada.jpg',
-  ),
-];
+final List<NotificationItem> mockNotifications = [];
 
-final List<User> mockUsers = [
-  User(
-    name: "Nidzo Aerodrom",
-    profilePicture: 'assets/nidzo_picture.png',
-    coverPhoto: 'assets/mzt.png',
-    bio: "Аеродром во душа",
-    phoneNumber: "+389 71111111",
-    email: "nidzo.aerodrom@example.com",
-    gender: "Male",
-    dateOfBirth: DateTime(1997, 8, 12),
-    coins: 1440,
-    friends: [],
-    posts: [
-      'assets/pp1.png',
-      'assets/pp2.png',
-      'assets/pp3.png',
-      'assets/pp4.png',
-      'assets/pp5.png',
-    ],
-    favoritePlaces: [],
-  ),
-  User(
-    name: "Samantha Phil",
-    profilePicture: 'assets/samantha_picture.png',
-    coverPhoto: '',
-    bio: "Lover of bar trivia nights and relaxing cafes.",
-    phoneNumber: "+389 72222222",
-    email: "samantha.phil@example.com",
-    gender: "Female",
-    dateOfBirth: DateTime(1995, 3, 22),
-    coins: 200,
-    friends: [],
-    posts: [],
-    favoritePlaces: [],
-  ),
-  User(
-    name: "John Doe",
-    profilePicture: 'assets/john_picture.png',
-    coverPhoto: 'assets/alice_cover.jpg',
-    bio: "Explorer of hidden gems in the city.",
-    phoneNumber: "+389 73333333",
-    email: "john.doe@example.com",
-    gender: "Male",
-    dateOfBirth: DateTime(1988, 11, 5),
-    coins: 50,
-    friends: [],
-    posts: [],
-    favoritePlaces: [],
-  ),
-];
+Future<void> loadMockData() async {
+  final db = FirebaseFirestore.instance;
 
+  try {
+    final placesSnap = await db.collection('Places').get();
+    final Map<String, Place> placeMap = {};
+    final Map<String, Place> placeNameMap = {};
+    mockPlaces
+      ..clear()
+      ..addAll(placesSnap.docs.map((d) {
+        final p = Place.fromMap(d.data());
+        placeMap[d.id] = p;
+        final nameKey = (p.name ?? '').trim().toLowerCase();
+        if (nameKey.isNotEmpty) placeNameMap[nameKey] = p;
+        return p;
+      }).toList());
 
+    final usersSnap = await db.collection('Users').get();
+    final Map<String, User> userMap = {};
+    final Map<String, List<dynamic>> rawFriends = {};
+    mockUsers.clear();
 
-void initializeUserFriends() {
-  mockUsers[0].friends.add(mockUsers[1]); // Nidzo is friends with Samantha
-  mockUsers[0].friends.add(mockUsers[2]); // Nidzo is friends with John
-  mockUsers[1].friends.add(mockUsers[0]); // Samantha is friends with Nidzo
-  mockUsers[2].friends.add(mockUsers[0]); // John is friends with Nidzo
+    for (var d in usersSnap.docs) {
+      final m = d.data();
+
+      rawFriends[d.id] = List<dynamic>.from(m['friends'] ?? []);
+
+      final user = User(
+        name: (m['name'] ?? '') as String,
+        profilePicture: (m['profilePicture'] ?? '') as String,
+        coverPhoto: (m['coverPhoto'] ?? '') as String,
+        bio: (m['bio'] ?? '') as String,
+        phoneNumber: (m['phoneNumber'] ?? '') as String,
+        email: (m['email'] ?? '') as String,
+        gender: (m['gender'] ?? '') as String,
+        dateOfBirth: DateTime.tryParse(m['dateOfBirth'] ?? '') ?? DateTime.now(),
+        coins: (m['coins'] ?? 0) as int,
+        friends: [],
+        posts: List<String>.from(m['posts'] ?? []),
+        favoritePlaces: [],
+      );
+
+      userMap[d.id] = user;
+      mockUsers.add(user);
+    }
+
+    final eventsSnap = await db.collection('Events').get();
+    mockEvents
+      ..clear()
+      ..addAll(eventsSnap.docs.map((d) {
+        final m = d.data();
+        final dynamic placeField = m['place'];
+
+        Place placeResolved;
+        if (placeField is DocumentReference) {
+          placeResolved = placeMap[placeField.id] ?? Place.fromMap({});
+        } else if (placeField is Map<String, dynamic>) {
+          placeResolved = Place.fromMap(placeField);
+        } else if (placeField is String) {
+          final key = placeField.trim().toLowerCase();
+          placeResolved = placeNameMap[key] ?? placeMap[placeField] ?? Place.fromMap({});
+        } else {
+          placeResolved = Place.fromMap({});
+        }
+
+        return Event(
+          description: (m['description'] ?? '') as String,
+          attendees: (m['attendees'] ?? 0) as int,
+          isParticipating: (m['isParticipating'] ?? false) as bool,
+          place: placeResolved,
+          eventImage: (m['eventImage'] ?? '') as String,
+        );
+      }).toList());
+
+    final couponsSnap = await db.collection('Coupons').get();
+    mockCoupons
+      ..clear()
+      ..addAll(couponsSnap.docs.map((d) => Coupon.fromMap(d.data())).toList());
+
+    final notificationsSnap = await db.collection('NotificationItems').get();
+    mockNotifications
+      ..clear()
+      ..addAll(notificationsSnap.docs.map((d) {
+        final m = d.data();
+        return NotificationItem.fromMap(m);
+      }).toList());
+
+    rawFriends.forEach((userId, list) {
+      final u = userMap[userId];
+      if (u == null) return;
+
+      for (var f in list) {
+        if (f is String) {
+          final targetName = f.trim().toLowerCase();
+          try {
+            final friend = mockUsers.firstWhere(
+              (mu) => mu.name.trim().toLowerCase() == targetName,
+            );
+            // avoid self-references and duplicates
+            if (friend != u && !u.friends.contains(friend)) {
+              u.friends.add(friend);
+            }
+          } catch (_) {
+          }
+        } else if (f is DocumentReference) {
+          final friend = userMap[f.id];
+          if (friend != null && friend != u && !u.friends.contains(friend)) {
+            u.friends.add(friend);
+          }
+        } else if (f is Map<String, dynamic>) {
+          final nestedName = ((f['name'] ?? '') as String).trim().toLowerCase();
+          if (nestedName.isNotEmpty) {
+            try {
+              final friend = mockUsers.firstWhere(
+                (mu) => mu.name.trim().toLowerCase() == nestedName,
+              );
+              if (friend != u && !u.friends.contains(friend)) {
+                u.friends.add(friend);
+              }
+            } catch (_) {
+            }
+          }
+        }
+      }
+    });
+
+    print('✅ Mock data loaded from Firestore successfully.');
+  } catch (e, st) {
+    print('❌ Error loading mock data from Firestore: $e\n$st');
+  }
 }
-
-
-final List<Coupon> mockCoupons = [
-  Coupon(
-    description: 'Ananas Gift Card worth 1000 den.',
-    photo: 'assets/ananas.png',
-    cost: 800,
-    qrCode: 'assets/qr.png',
-  ),
-  Coupon(
-    description: 'Buy Prime Subscription for 1000 circles',
-    photo: 'assets/ananas.png',
-    cost: 1000,
-    qrCode: 'assets/qr.png',
-  ),
-  Coupon(
-    description: 'Burger King Coupon worth 500 den.',
-    photo: 'assets/burger_king.png',
-    cost: 300,
-    qrCode: 'assets/qr.png',
-  ),
-];
-
-class NotificationItem {
-  final String message;
-  final String timestamp;
-  final String? profilePicture;
-  final bool isActionable;
-  final bool isSponsored;
-
-  NotificationItem({
-    required this.message,
-    required this.timestamp,
-    this.profilePicture,
-    this.isActionable = false,
-    this.isSponsored = false,
-  });
-}
-
-final List<NotificationItem> mockNotifications = [
-  NotificationItem(
-    message: "Samantha Phil requested to join your circle!",
-    timestamp: "2m",
-    profilePicture: "assets/samantha_picture.png",
-    isActionable: true,
-  ),
-  NotificationItem(
-    message: "You have received 100 circles from circl'in up with 2 people.",
-    timestamp: "2h",
-    profilePicture: "assets/stanica.jpeg",
-  ),
-  NotificationItem(
-    message: "John Doe thinks your photo is great!",
-    timestamp: "40m",
-    profilePicture: "assets/john_picture.png",
-  ),
-  NotificationItem(
-    message: "John Doe accepted you in their circle.",
-    timestamp: "1h",
-    profilePicture: "assets/john_picture.png",
-  ),
-  NotificationItem(
-    message: "Unforgettable night at Stanica 26 on 07.01 at 11pm.",
-    timestamp: "2h",
-    profilePicture: "assets/stanica.jpeg",
-  ),
-  NotificationItem(
-    message: "Cocktails night at Kotur tonight, all drinks are 20% off.",
-    timestamp: "3h",
-    profilePicture: "assets/kotur.png",
-    isSponsored: true,
-  ),
-];
