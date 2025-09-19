@@ -1,25 +1,23 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:circl_up_app/navigation/route_generator.dart';
 import 'package:circl_up_app/widgets/instagram_style_navigation.dart';
+import 'package:circl_up_app/screens/auth_gate.dart';
+
 import 'data/data.dart';
 import 'utils/constants.dart';
-import 'models/event.dart'; // ✅ Import your Event model
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // Load data from Firestore into mock lists before starting the app
   await loadMockData();
 
-  // Debugging: Print lengths of mock arrays
-  print('mockPlaces length: ${mockPlaces.length}');
-  print('mockEvents length: ${mockEvents.length}');
-  print('mockUsers length: ${mockUsers.length}');
-  print('mockCoupons length: ${mockCoupons.length}');
-  print('mockNotifications length: ${mockNotifications.length}');
+  const forceSignOutOnLaunch = true; // TEMP for testing
+  if (forceSignOutOnLaunch) {
+    await FirebaseAuth.instance.signOut();
+  }
 
   runApp(const MyApp());
 }
@@ -44,7 +42,9 @@ class MyApp extends StatelessWidget {
           unselectedItemColor: kSecondaryColor,
         ),
       ),
-      home: InstagramStyleNavigation(),
+      home: const AuthGate(
+        signedInChild: InstagramStyleNavigation(), // your existing entry
+      ),
       onGenerateRoute: RouteGenerator.generateRoute,
     );
   }

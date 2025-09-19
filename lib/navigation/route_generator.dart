@@ -1,16 +1,14 @@
-import 'package:circl_up_app/screens/camera_page.dart';
 import 'package:circl_up_app/screens/group_chat_page.dart';
-import 'package:circl_up_app/screens/match_page.dart';
-import 'package:flutter/material.dart';
 import 'package:circl_up_app/screens/home_screen.dart';
-import 'package:circl_up_app/screens/rewards_screen.dart';
 import 'package:circl_up_app/screens/notifications_screen.dart';
 import 'package:circl_up_app/screens/profile_screen.dart';
+import 'package:circl_up_app/screens/rewards_screen.dart';
+import 'package:flutter/material.dart';
 
 import '../data/data.dart';
+import '../screens/edit_screen.dart';
 import '../screens/favorites_screen.dart';
 import '../screens/friends_screen.dart';
-import '../screens/edit_screen.dart';
 import '../screens/privaty_policy_screen.dart';
 import '../screens/setting_screen.dart';
 
@@ -39,7 +37,9 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen());
       case '/settings':
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
-      default:
+      case '/group-chat':
+        return MaterialPageRoute(builder: (_) => const GroupChatPage());
+        default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
             body: Center(

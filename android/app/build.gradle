@@ -1,56 +1,58 @@
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
+    id "com.google.gms.google-services"
 }
 
 android {
-    namespace = "com.example.circl_up_app"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    namespace "com.example.circl_up_app"          // keep your actual package if different
+    compileSdk = 35
+    ndkVersion = "25.1.8937393"
 
+    defaultConfig {
+        applicationId "com.example.circl_up_app"  // keep yours
+
+        minSdk = 23
+        targetSdk = 35
+
+        // ✅ Explicit version values so the manifest always has them
+        versionCode 1
+        versionName "1.0"
+    }
+
+    // Modern Java/Kotlin to avoid obsolete JDK 8 warnings
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        // coreLibraryDesugaringEnabled true // only if you add the desugar dep below
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
-    }
-
-    defaultConfig {
-        // ✅ Use your unique Application ID
-        applicationId = "com.example.circl_up_app"
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        jvmTarget = "17"
     }
 
     buildTypes {
         release {
-            // ✅ For now using debug signing keys (replace with release config later)
-            signingConfig = signingConfigs.debug
+            signingConfig signingConfigs.debug   // change to your real signing when ready
+            minifyEnabled false
+            shrinkResources false
         }
+        debug { }
     }
-}
 
-flutter {
-    source = "../.."
+    // If you hit duplicate resource issues, uncomment:
+    // packagingOptions {
+    //     resources {
+    //         excludes += [ "META-INF/*" ]
+    //     }
+    // }
 }
 
 dependencies {
-    // ✅ Firebase BoM (ensures version compatibility across Firebase libs)
+    // Optional: keep any direct native Firebase deps in sync
     implementation platform("com.google.firebase:firebase-bom:33.1.2")
 
-    // ✅ Firebase products
-    implementation "com.google.firebase:firebase-analytics"
-    implementation "com.google.firebase:firebase-firestore"
-
-    // ✅ Google Maps SDK (needed by google_maps_flutter plugin)
-    implementation "com.google.android.gms:play-services-maps:18.1.0"
+    // If you enabled desugaring above, also add:
+    // coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.0.4"
 }
-
-// ✅ Apply Google Services plugin at the BOTTOM
-apply plugin: "com.google.gms.google-services"

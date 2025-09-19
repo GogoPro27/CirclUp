@@ -2,6 +2,7 @@ import 'package:circl_up_app/screens/your_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'help_center_screen.dart';
 import 'setting_screen.dart';
+import 'package:circl_up_app/services/auth_service.dart';
 
 class EditScreen extends StatefulWidget {
   final int initialIndex; // Add a parameter for the initial tab index
@@ -221,8 +222,9 @@ class _EditScreenState extends State<EditScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   OutlinedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       Navigator.of(context).pop();
+                      await AuthService.signOut();
                     },
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Colors.orange),

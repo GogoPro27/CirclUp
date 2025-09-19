@@ -1,10 +1,12 @@
+// Project-level Gradle file
+
 buildscript {
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        // ✅ Google Services Gradle plugin (needed for Firebase)
+        // Google Services Gradle plugin (needed by Firebase)
         classpath "com.google.gms:google-services:4.4.2"
     }
 }
@@ -16,13 +18,11 @@ allprojects {
     }
 }
 
+// Keep Flutter's shared build dir layout
 rootProject.buildDir = "../build"
 
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-
-subprojects {
     project.evaluationDependsOn(":app")
 }
 
