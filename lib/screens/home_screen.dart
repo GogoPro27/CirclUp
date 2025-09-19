@@ -1,7 +1,7 @@
 import 'package:circl_up_app/screens/match_page.dart';
 import 'package:circl_up_app/services/filter_service.dart';
 import 'package:flutter/material.dart';
-import '../data/mock_data.dart';
+import '../data/data.dart';
 import '../models/event.dart';
 import '../widgets/marker_button.dart';
 import '../widgets/filter_button.dart';

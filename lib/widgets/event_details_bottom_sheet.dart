@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/event.dart';
-import '../data/mock_data.dart';
+import '../data/data.dart';
 
 class EventDetailsBottomSheet extends StatefulWidget {
   final Event event;

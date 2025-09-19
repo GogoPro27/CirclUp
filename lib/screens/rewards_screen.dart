@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/coupon.dart';
-import '../data/mock_data.dart';
+import '../data/data.dart';
 import '../widgets/coupon_details_bottom_sheet.dart';
 import '../widgets/coupon_view_bottom_sheet.dart';
 

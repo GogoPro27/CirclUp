@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:circl_up_app/navigation/route_generator.dart';
 import 'package:circl_up_app/widgets/instagram_style_navigation.dart';
-import 'data/mock_data.dart';
+import 'data/data.dart';
 import 'utils/constants.dart';
 import 'models/event.dart'; // ✅ Import your Event model
 

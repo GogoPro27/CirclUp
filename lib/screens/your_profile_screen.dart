@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../data/mock_data.dart';
+import '../data/data.dart';
 
 class YourProfileScreen extends StatelessWidget {
   const YourProfileScreen({Key? key}) : super(key: key);

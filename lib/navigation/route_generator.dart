@@ -7,7 +7,7 @@ import 'package:circl_up_app/screens/rewards_screen.dart';
 import 'package:circl_up_app/screens/notifications_screen.dart';
 import 'package:circl_up_app/screens/profile_screen.dart';
 
-import '../data/mock_data.dart';
+import '../data/data.dart';
 import '../screens/favorites_screen.dart';
 import '../screens/friends_screen.dart';
 import '../screens/edit_screen.dart';

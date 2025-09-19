@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../data/mock_data.dart'; // 👈 where your Event/Place lists live
+import '../data/data.dart'; // 👈 where your Event/Place lists live
 import '../models/event.dart';
 
 class MapScreen extends StatefulWidget {
