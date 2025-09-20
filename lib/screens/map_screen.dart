@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../data/data.dart'; // 👈 where your Event/Place lists live
+import '../data/data.dart'; // where your mockEvents live
 import '../models/event.dart';
+import '../widgets/event_details_bottom_sheet.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
@@ -13,6 +14,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   GoogleMapController? _controller;
   final Set<Marker> _markers = {};
+  Event? _selectedEvent; // tapped event
 
   static const LatLng _skopjeCenter = LatLng(41.9981, 21.4254);
 
@@ -23,35 +25,73 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void _loadEventMarkers() {
-    final List<Event> events = mockEvents; // 👈 replace with your list of events
+    final List<Event> events = mockEvents;
 
     final newMarkers = events.map((event) {
       return Marker(
         markerId: MarkerId(event.place.name),
         position: LatLng(event.place.x, event.place.y),
-        infoWindow: InfoWindow(
-          title: event.place.name,
-          snippet: event.description,
-        ),
+        infoWindow: const InfoWindow(),
+        consumeTapEvents: true,
+        onTap: () {
+          setState(() {
+            _selectedEvent = event;
+          });
+        },
       );
     }).toSet();
 
     setState(() {
-      _markers.clear();
-      _markers.addAll(newMarkers);
+      _markers
+        ..clear()
+        ..addAll(newMarkers);
+    });
+  }
+
+  void _closeCard() {
+    setState(() {
+      _selectedEvent = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GoogleMap(
-        initialCameraPosition: const CameraPosition(
-          target: _skopjeCenter,
-          zoom: 13,
-        ),
-        markers: _markers,
-        onMapCreated: (controller) => _controller = controller,
+      body: Stack(
+        children: [
+          GoogleMap(
+            initialCameraPosition: const CameraPosition(
+              target: _skopjeCenter,
+              zoom: 13,
+            ),
+            markers: _markers,
+            onMapCreated: (controller) => _controller = controller,
+            onTap: (_) => _closeCard(),
+          ),
+
+          // Animated slide-up card (EventDetailsBottomSheet)
+          AnimatedSlide(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            offset: _selectedEvent == null ? const Offset(0, 1) : Offset.zero,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 300),
+              opacity: _selectedEvent == null ? 0 : 1,
+              child: _selectedEvent == null
+                  ? const SizedBox.shrink()
+                  : Align(
+                alignment: Alignment.bottomCenter,
+                child: EventDetailsBottomSheet(
+                  event: _selectedEvent!,
+                  onParticipationChanged: () {
+                    setState(() {}); // refresh participants count
+                  },
+                  onClose: _closeCard, // 👈 back arrow closes card
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -5,11 +5,13 @@ import '../data/data.dart';
 class EventDetailsBottomSheet extends StatefulWidget {
   final Event event;
   final VoidCallback onParticipationChanged;
+  final VoidCallback? onClose; // <- so MapScreen can close the card
 
   const EventDetailsBottomSheet({
     Key? key,
     required this.event,
     required this.onParticipationChanged,
+    this.onClose,
   }) : super(key: key);
 
   @override
@@ -20,8 +22,10 @@ class EventDetailsBottomSheet extends StatefulWidget {
 class _EventDetailsBottomSheetState extends State<EventDetailsBottomSheet> {
   @override
   Widget build(BuildContext context) {
-    // Check if the place is liked by the user
+    // is the place in favorites?
     bool isLiked = mockUsers[0].favoritePlaces.contains(widget.event.place);
+
+    final BorderRadius imgRadius = BorderRadius.circular(20);
 
     return Container(
       padding: const EdgeInsets.all(16.0),
@@ -36,43 +40,26 @@ class _EventDetailsBottomSheetState extends State<EventDetailsBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Event Image
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Image.asset(
-              widget.event.eventImage,
-              height: 200,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Event Name with Like Button
+          // Top row: back arrow (left) + heart (right)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const SizedBox(width: 48), // Spacer for alignment
-              Expanded(
-                child: Text(
-                  widget.event.place.name,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+              IconButton(
+                visualDensity: VisualDensity.compact,
+                icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                onPressed: widget.onClose ?? () => Navigator.pop(context),
               ),
               IconButton(
+                visualDensity: VisualDensity.compact,
                 icon: Icon(
                   isLiked ? Icons.favorite : Icons.favorite_border,
-                  color: isLiked ? Colors.red : Colors.grey,
+                  color: isLiked ? Colors.red : Colors.black87,
                 ),
                 onPressed: () {
                   setState(() {
                     if (isLiked) {
-                      // Remove from favorites if unliked
                       mockUsers[0].favoritePlaces.remove(widget.event.place);
                     } else {
-                      // Add to favorites if liked
                       mockUsers[0].favoritePlaces.add(widget.event.place);
                     }
                   });
@@ -80,22 +67,57 @@ class _EventDetailsBottomSheetState extends State<EventDetailsBottomSheet> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          // Event Time
-          Text(
-            '07.01.2024\n23:00 - 02:00',
-            style: const TextStyle(fontSize: 14, color: Colors.grey),
-            textAlign: TextAlign.center,
+
+          // Image with orange border and rounded corners
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: imgRadius,
+              border: Border.all(color: Colors.orange, width: 4),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Image.asset(
+              widget.event.eventImage,
+              height: 200,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
           ),
+
+          const SizedBox(height: 16),
+
+          // Title
+          Text(
+            widget.event.place.name,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              // soft shadow like your screenshot
+              shadows: [Shadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2))],
+            ),
+          ),
+
           const SizedBox(height: 8),
-          // Event Description
+
+          // Time (static demo)
+          const Text(
+            '07.01.2024\n23:00 - 02:00',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 14, color: Colors.grey),
+          ),
+
+          const SizedBox(height: 8),
+
+          // Description
           Text(
             widget.event.description,
-            style: const TextStyle(fontSize: 16),
             textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16),
           ),
+
           const SizedBox(height: 16),
-          // Participate Button
+
+          // Participate / Cancel
           ElevatedButton(
             onPressed: () {
               setState(() {
@@ -105,15 +127,12 @@ class _EventDetailsBottomSheetState extends State<EventDetailsBottomSheet> {
                   widget.event.attendees++;
                 }
                 widget.event.isParticipating = !widget.event.isParticipating;
-
-                // Notify the parent widget about the change
                 widget.onParticipationChanged();
               });
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: widget.event.isParticipating
-                  ? Colors.white
-                  : Colors.orange,
+              backgroundColor:
+              widget.event.isParticipating ? Colors.white : Colors.orange,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
                 side: BorderSide(
@@ -125,12 +144,15 @@ class _EventDetailsBottomSheetState extends State<EventDetailsBottomSheet> {
             child: Text(
               widget.event.isParticipating ? "CANCEL" : "PARTICIPATE",
               style: TextStyle(
-                color:
-                widget.event.isParticipating ? Colors.orange : Colors.white,
+                color: widget.event.isParticipating
+                    ? Colors.orange
+                    : Colors.white,
               ),
             ),
           ),
+
           const SizedBox(height: 8),
+
           Text(
             '${widget.event.attendees} participants till now',
             style: const TextStyle(color: Colors.orange),
