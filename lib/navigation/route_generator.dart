@@ -29,7 +29,7 @@ class RouteGenerator {
         );
       case '/favorites':
         return MaterialPageRoute(
-          builder: (_) => FavoritesScreen(user: mockUsers[0]),
+          builder: (_) => const FavoritesScreen(),
         );
       case '/edit':
         return MaterialPageRoute(builder: (_) => const EditScreen());
