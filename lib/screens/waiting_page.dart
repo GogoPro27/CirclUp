@@ -1,60 +1,39 @@
-import 'dart:io';
-import 'package:circl_up_app/screens/waiting_page.dart';
+import 'dart:async';
+import 'package:circl_up_app/screens/success_page.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
-import 'package:path/path.dart' as path;
-import 'package:permission_handler/permission_handler.dart';
 
-class MatchPage extends StatelessWidget {
-  const MatchPage({Key? key}) : super(key: key);
+class WaitingPage extends StatefulWidget {
+  const WaitingPage({Key? key}) : super(key: key);
 
-  Future<void> _takePhoto(BuildContext context) async {
-    final picker = ImagePicker();
+  @override
+  State<WaitingPage> createState() => _WaitingPageState();
+}
 
-    // Request camera + storage permissions
-    final cameraStatus = await Permission.camera.request();
-    final storageStatus = await Permission.storage.request();
+class _WaitingPageState extends State<WaitingPage> {
+  int _counter = 1; // start with 1/3
 
-    if (!cameraStatus.isGranted || !storageStatus.isGranted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Camera or storage permission denied")),
-      );
-      return;
-    }
+  @override
+  void initState() {
+    super.initState();
 
-    // Open camera
-    final XFile? pickedFile = await picker.pickImage(source: ImageSource.camera);
-    if (pickedFile == null) return;
-
-    try {
-      // Path: /storage/emulated/0/Pictures/matched_pictures/
-      final Directory extDir =
-      Directory("/storage/emulated/0/Pictures/matched_pictures");
-
-      if (!(await extDir.exists())) {
-        await extDir.create(recursive: true);
+    // Simulate waiting for other users uploading (2 seconds each step)
+    Timer.periodic(const Duration(seconds: 2), (timer) {
+      if (_counter < 3) {
+        setState(() {
+          _counter++;
+        });
+      } else {
+        timer.cancel();
+        // Wait half a second then navigate to success page
+        Future.delayed(const Duration(milliseconds: 500), () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const SuccessPage()),
+          );
+          // 👆 make sure you define this route in MaterialApp
+        });
       }
-
-      // Unique name with timestamp
-      final String fileName =
-          "match_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}${path.extension(pickedFile.path)}";
-
-      final String newPath = path.join(extDir.path, fileName);
-
-      // Copy the photo
-      final File newImage = await File(pickedFile.path).copy(newPath);
-
-      // ✅ After saving the photo → navigate to WaitingPage
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const WaitingPage()),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error saving photo: $e")),
-      );
-    }
+    });
   }
 
   @override
@@ -110,48 +89,32 @@ class MatchPage extends StatelessWidget {
 
               // Subtitle
               const Text(
-                "Take a picture with the following people to receive your points!",
+                "Waiting for all participants to take the picture...",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey),
               ),
               const SizedBox(height: 20),
 
-              // Users list
+              // Users list (same as MatchPage)
               _buildUserTile(
                   "Samantha Phil", "assets/samantha_picture.png", true),
               _buildUserTile("John Doe", "assets/john_picture.png", true),
               const SizedBox(height: 30),
 
-              // Row of buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildCircleButton(Icons.chat_bubble, "Group chat", () {
-                    // TODO: implement group chat navigation
-                  }),
-                  const SizedBox(width: 30),
-                  _buildCircleButton(Icons.photo_camera, "Take Photo", () {
-                    _takePhoto(context);
-                  }),
-                ],
-              ),
+              // Only group chat button (no take photo)
+              _buildCircleButton(Icons.chat_bubble, "Group chat", () {
+                // TODO: implement group chat
+              }),
 
               const Spacer(),
 
-              // Reward text
-              RichText(
-                text: const TextSpan(
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  children: [
-                    TextSpan(
-                      text: "100 ",
-                      style: TextStyle(color: Colors.orange),
-                    ),
-                    TextSpan(
-                      text: "CIRCLES",
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ],
+              // Counter text
+              Text(
+                "$_counter/3 uploaded",
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.orange,
                 ),
               ),
               const SizedBox(height: 20),
@@ -162,7 +125,7 @@ class MatchPage extends StatelessWidget {
     );
   }
 
-  // User row widget
+  // Reuse the same user tile widget
   Widget _buildUserTile(String name, String imagePath, bool online) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -198,7 +161,7 @@ class MatchPage extends StatelessWidget {
     );
   }
 
-  // Orange round button with label
+  // Reuse circle button widget
   Widget _buildCircleButton(IconData icon, String label, VoidCallback onTap) {
     return Column(
       children: [
