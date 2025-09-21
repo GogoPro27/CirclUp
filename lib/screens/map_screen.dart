@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:circl_up_app/screens/match_page.dart'; // 👈 import MatchPage
 import '../data/data.dart'; // where your mockEvents live
 import '../models/event.dart';
 import '../widgets/event_details_bottom_sheet.dart';
@@ -69,6 +70,24 @@ class _MapScreenState extends State<MapScreen> {
             onTap: (_) => _closeCard(),
           ),
 
+          // ✅ Top-left Cupp icon
+          Positioned(
+            top: 40,
+            left: 20,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const MatchPage()),
+                );
+              },
+              child: Image.asset(
+                'assets/Cupp_pair.png',
+                width: 70,
+                height: 70,
+              ),
+            ),
+          ),
+
           // Animated slide-up card (EventDetailsBottomSheet)
           AnimatedSlide(
             duration: const Duration(milliseconds: 300),
@@ -86,7 +105,7 @@ class _MapScreenState extends State<MapScreen> {
                   onParticipationChanged: () {
                     setState(() {}); // refresh participants count
                   },
-                  onClose: _closeCard, // 👈 back arrow closes card
+                  onClose: _closeCard,
                 ),
               ),
             ),
