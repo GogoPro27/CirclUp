@@ -1,39 +1,63 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:circl_up_app/screens/success_page.dart';
 import 'package:flutter/material.dart';
 
 class WaitingPage extends StatefulWidget {
-  const WaitingPage({Key? key}) : super(key: key);
+  final List<Map<String, dynamic>> matchedUsers;
+
+  const WaitingPage({Key? key, required this.matchedUsers}) : super(key: key);
 
   @override
   State<WaitingPage> createState() => _WaitingPageState();
 }
 
 class _WaitingPageState extends State<WaitingPage> {
-  int _counter = 1; // start with 1/3
+  int _counter = 1;
+  late int totalParticipants;
 
   @override
   void initState() {
     super.initState();
+    totalParticipants = widget.matchedUsers.length + 1;
 
-    // Simulate waiting for other users uploading (2 seconds each step)
     Timer.periodic(const Duration(seconds: 2), (timer) {
-      if (_counter < 3) {
+      if (_counter < totalParticipants) {
         setState(() {
           _counter++;
         });
       } else {
         timer.cancel();
-        // Wait half a second then navigate to success page
-        Future.delayed(const Duration(milliseconds: 500), () {
+        Future.delayed(const Duration(milliseconds: 500), () async {
+          await _addCoinsToParticipants();
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const SuccessPage()),
+            MaterialPageRoute(
+              builder: (_) => SuccessPage(matchedUsers: widget.matchedUsers),
+            ),
           );
-          // 👆 make sure you define this route in MaterialApp
         });
       }
     });
+  }
+
+  Future<void> _addCoinsToParticipants() async {
+    final firestore = FirebaseFirestore.instance;
+
+    // Add coins to Nidzo Aerodrom
+    await firestore.collection("Users").doc("user1").update({
+      "coins": FieldValue.increment(100),
+    });
+
+    // Add coins to matched users
+    for (final user in widget.matchedUsers) {
+      final docId = user["id"];
+      if (docId != null) {
+        await firestore.collection("Users").doc(docId).update({
+          "coins": FieldValue.increment(100),
+        });
+      }
+    }
   }
 
   @override
@@ -45,7 +69,6 @@ class _WaitingPageState extends State<WaitingPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Back button
               Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
@@ -54,7 +77,6 @@ class _WaitingPageState extends State<WaitingPage> {
                 ),
               ),
 
-              // Logo Circle
               Container(
                 width: 100,
                 height: 100,
@@ -69,7 +91,6 @@ class _WaitingPageState extends State<WaitingPage> {
               ),
               const SizedBox(height: 16),
 
-              // Title
               RichText(
                 textAlign: TextAlign.center,
                 text: const TextSpan(
@@ -87,7 +108,6 @@ class _WaitingPageState extends State<WaitingPage> {
               ),
               const SizedBox(height: 8),
 
-              // Subtitle
               const Text(
                 "Waiting for all participants to take the picture...",
                 textAlign: TextAlign.center,
@@ -95,22 +115,23 @@ class _WaitingPageState extends State<WaitingPage> {
               ),
               const SizedBox(height: 20),
 
-              // Users list (same as MatchPage)
-              _buildUserTile(
-                  "Samantha Phil", "assets/samantha_picture.png", true),
-              _buildUserTile("John Doe", "assets/john_picture.png", true),
+              Column(
+                children: widget.matchedUsers
+                    .map((u) => _buildUserTile(
+                  u["name"] ?? "Unknown",
+                  u["profilePicture"] ?? "assets/default.png",
+                  true,
+                ))
+                    .toList(),
+              ),
               const SizedBox(height: 30),
 
-              // Only group chat button (no take photo)
-              _buildCircleButton(Icons.chat_bubble, "Group chat", () {
-                // TODO: implement group chat
-              }),
+              _buildCircleButton(Icons.chat_bubble, "Group chat", () {}),
 
               const Spacer(),
 
-              // Counter text
               Text(
-                "$_counter/3 uploaded",
+                "$_counter/$totalParticipants uploaded",
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -125,7 +146,6 @@ class _WaitingPageState extends State<WaitingPage> {
     );
   }
 
-  // Reuse the same user tile widget
   Widget _buildUserTile(String name, String imagePath, bool online) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -161,7 +181,6 @@ class _WaitingPageState extends State<WaitingPage> {
     );
   }
 
-  // Reuse circle button widget
   Widget _buildCircleButton(IconData icon, String label, VoidCallback onTap) {
     return Column(
       children: [

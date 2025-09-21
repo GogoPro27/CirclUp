@@ -1,13 +1,53 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:circl_up_app/screens/waiting_page.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class MatchPage extends StatelessWidget {
+class MatchPage extends StatefulWidget {
   const MatchPage({Key? key}) : super(key: key);
+
+  @override
+  State<MatchPage> createState() => _MatchPageState();
+}
+
+class _MatchPageState extends State<MatchPage> {
+  List<Map<String, dynamic>> matchedUsers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchRandomUsers();
+  }
+
+  Future<void> _fetchRandomUsers() async {
+    final firestore = FirebaseFirestore.instance;
+
+    // Get all users except Nidzo Aerodrom (user1)
+    final query = await firestore.collection("Users").get();
+    final allUsers = query.docs
+        .where((doc) => doc.id != "user1")
+        .map((doc) => {
+      "id": doc.id, // ✅ keep Firestore doc.id
+      ...doc.data(),
+    })
+        .toList();
+
+    if (allUsers.isEmpty) return;
+
+    // Pick 1 or 2 random users
+    final rand = Random();
+    final numberToPick = rand.nextInt(2) + 1; // 1 or 2
+    allUsers.shuffle();
+
+    setState(() {
+      matchedUsers = allUsers.take(numberToPick).toList();
+    });
+  }
 
   Future<void> _takePhoto(BuildContext context) async {
     final picker = ImagePicker();
@@ -28,7 +68,6 @@ class MatchPage extends StatelessWidget {
     if (pickedFile == null) return;
 
     try {
-      // Path: /storage/emulated/0/Pictures/matched_pictures/
       final Directory extDir =
       Directory("/storage/emulated/0/Pictures/matched_pictures");
 
@@ -36,19 +75,19 @@ class MatchPage extends StatelessWidget {
         await extDir.create(recursive: true);
       }
 
-      // Unique name with timestamp
       final String fileName =
           "match_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}${path.extension(pickedFile.path)}";
 
       final String newPath = path.join(extDir.path, fileName);
 
-      // Copy the photo
-      final File newImage = await File(pickedFile.path).copy(newPath);
+      await File(pickedFile.path).copy(newPath);
 
-      // ✅ After saving the photo → navigate to WaitingPage
+      // ✅ Pass matchedUsers to WaitingPage
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const WaitingPage()),
+        MaterialPageRoute(
+          builder: (_) => WaitingPage(matchedUsers: matchedUsers),
+        ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -66,7 +105,6 @@ class MatchPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Back button
               Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
@@ -108,7 +146,6 @@ class MatchPage extends StatelessWidget {
               ),
               const SizedBox(height: 8),
 
-              // Subtitle
               const Text(
                 "Take a picture with the following people to receive your points!",
                 textAlign: TextAlign.center,
@@ -116,19 +153,26 @@ class MatchPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Users list
-              _buildUserTile(
-                  "Samantha Phil", "assets/samantha_picture.png", true),
-              _buildUserTile("John Doe", "assets/john_picture.png", true),
+              // Dynamic users
+              if (matchedUsers.isEmpty)
+                const CircularProgressIndicator()
+              else
+                Column(
+                  children: matchedUsers
+                      .map((u) => _buildUserTile(
+                    u["name"] ?? "Unknown",
+                    u["profilePicture"] ?? "assets/default.png",
+                    true,
+                  ))
+                      .toList(),
+                ),
+
               const SizedBox(height: 30),
 
-              // Row of buttons
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildCircleButton(Icons.chat_bubble, "Group chat", () {
-                    // TODO: implement group chat navigation
-                  }),
+                  _buildCircleButton(Icons.chat_bubble, "Group chat", () {}),
                   const SizedBox(width: 30),
                   _buildCircleButton(Icons.photo_camera, "Take Photo", () {
                     _takePhoto(context);
@@ -138,7 +182,6 @@ class MatchPage extends StatelessWidget {
 
               const Spacer(),
 
-              // Reward text
               RichText(
                 text: const TextSpan(
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
@@ -162,7 +205,6 @@ class MatchPage extends StatelessWidget {
     );
   }
 
-  // User row widget
   Widget _buildUserTile(String name, String imagePath, bool online) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -198,7 +240,6 @@ class MatchPage extends StatelessWidget {
     );
   }
 
-  // Orange round button with label
   Widget _buildCircleButton(IconData icon, String label, VoidCallback onTap) {
     return Column(
       children: [

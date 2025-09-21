@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class SuccessPage extends StatelessWidget {
-  const SuccessPage({Key? key}) : super(key: key);
+  final List<Map<String, dynamic>> matchedUsers;
+
+  const SuccessPage({Key? key, required this.matchedUsers}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,6 @@ class SuccessPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Logo circle with image
               Container(
                 width: 100,
                 height: 100,
@@ -31,15 +32,11 @@ class SuccessPage extends StatelessWidget {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Image.asset(
-                    "assets/Cupp_pair.png",
-                    fit: BoxFit.contain,
-                  ),
+                  child: Image.asset("assets/Cupp_pair.png", fit: BoxFit.contain),
                 ),
               ),
               const SizedBox(height: 24),
 
-              // Title text
               const Text(
                 "Great discomfort!\nYou have received",
                 textAlign: TextAlign.center,
@@ -51,7 +48,6 @@ class SuccessPage extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
-              // Circles reward
               RichText(
                 text: const TextSpan(
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -69,11 +65,15 @@ class SuccessPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Participants list
               const Text("with :", style: TextStyle(fontSize: 16)),
               const SizedBox(height: 12),
-              _buildUserTile("Samantha Phil", "assets/samantha_picture.png"),
-              _buildUserTile("John Doe", "assets/john_picture.png"),
+
+
+              // Matched users
+              ...matchedUsers.map((u) => _buildUserTile(
+                u["name"] ?? "Unknown",
+                u["profilePicture"] ?? "assets/default.png",
+              )),
 
               const Spacer(),
             ],
