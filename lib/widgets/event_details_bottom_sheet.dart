@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/event.dart';
-import '../data/data.dart';
 
 class EventDetailsBottomSheet extends StatefulWidget {
   final Event event;
   final VoidCallback onParticipationChanged;
-  final VoidCallback? onClose; // <- so MapScreen can close the card
+  final VoidCallback? onClose; // so MapScreen can close the card
 
   const EventDetailsBottomSheet({
     Key? key,
@@ -20,11 +20,41 @@ class EventDetailsBottomSheet extends StatefulWidget {
 }
 
 class _EventDetailsBottomSheetState extends State<EventDetailsBottomSheet> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<String> userFavorites = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavorites();
+  }
+
+  Future<void> _loadFavorites() async {
+    final doc = await _firestore.collection("Users").doc("user1").get();
+    setState(() {
+      userFavorites = List<String>.from(doc.data()?["favoritePlaces"] ?? []);
+    });
+  }
+
+  Future<void> _toggleFavorite(bool isLiked) async {
+    final docRef = _firestore.collection("Users").doc("user1");
+    if (isLiked) {
+      await docRef.update({
+        "favoritePlaces":
+        FieldValue.arrayRemove([widget.event.place.name])
+      });
+    } else {
+      await docRef.update({
+        "favoritePlaces":
+        FieldValue.arrayUnion([widget.event.place.name])
+      });
+    }
+    await _loadFavorites(); // refresh after update
+  }
+
   @override
   Widget build(BuildContext context) {
-    // is the place in favorites?
-    bool isLiked = mockUsers[0].favoritePlaces.contains(widget.event.place);
-
+    final bool isLiked = userFavorites.contains(widget.event.place.name);
     final BorderRadius imgRadius = BorderRadius.circular(20);
 
     return Container(
@@ -40,7 +70,7 @@ class _EventDetailsBottomSheetState extends State<EventDetailsBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Top row: back arrow (left) + heart (right)
+          // Top row: back + like
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -55,20 +85,12 @@ class _EventDetailsBottomSheetState extends State<EventDetailsBottomSheet> {
                   isLiked ? Icons.favorite : Icons.favorite_border,
                   color: isLiked ? Colors.red : Colors.black87,
                 ),
-                onPressed: () {
-                  setState(() {
-                    if (isLiked) {
-                      mockUsers[0].favoritePlaces.remove(widget.event.place);
-                    } else {
-                      mockUsers[0].favoritePlaces.add(widget.event.place);
-                    }
-                  });
-                },
+                onPressed: () => _toggleFavorite(isLiked),
               ),
             ],
           ),
 
-          // Image with orange border and rounded corners
+          // Event image
           Container(
             decoration: BoxDecoration(
               borderRadius: imgRadius,
@@ -85,21 +107,26 @@ class _EventDetailsBottomSheetState extends State<EventDetailsBottomSheet> {
 
           const SizedBox(height: 16),
 
-          // Title
+          // Place name
           Text(
             widget.event.place.name,
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              // soft shadow like your screenshot
-              shadows: [Shadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2))],
+              shadows: [
+                Shadow(
+                  color: Colors.black26,
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                )
+              ],
             ),
           ),
 
           const SizedBox(height: 8),
 
-          // Time (static demo)
+          // Static time demo
           const Text(
             '07.01.2024\n23:00 - 02:00',
             textAlign: TextAlign.center,
@@ -117,7 +144,7 @@ class _EventDetailsBottomSheetState extends State<EventDetailsBottomSheet> {
 
           const SizedBox(height: 16),
 
-          // Participate / Cancel
+          // Participate button
           ElevatedButton(
             onPressed: () {
               setState(() {
