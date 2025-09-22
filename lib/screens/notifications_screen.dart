@@ -32,61 +32,78 @@ class NotificationsScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final notification = mockNotifications[index];
           final backgroundColor = index % 2 == 0
-              ? Colors.grey.shade100 // Light grey for even-indexed notifications
-              : Colors.white; // White for odd-indexed notifications
+              ? Colors.grey.shade100
+              : Colors.white;
 
           return Card(
             margin: const EdgeInsets.symmetric(vertical: 8),
             elevation: notification.isActionable ? 2 : 0,
             color: backgroundColor,
-            child: ListTile(
-              leading: notification.profilePicture != null
-                  ? CircleAvatar(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Profile picture
+                  if (notification.profilePicture != null)
+                    CircleAvatar(
                       backgroundImage: AssetImage(notification.profilePicture!),
-                    )
-                  : null,
-              title: Text(notification.message),
-              subtitle: Text(notification.timestamp),
-              trailing: notification.isActionable
-                  ? Row(
-                      mainAxisSize: MainAxisSize.min,
+                    ),
+
+                  if (notification.profilePicture != null)
+                    const SizedBox(width: 12),
+
+                  // Main content
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            // Accept action (MVP - no functionality)
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
+                        Text(notification.message,
+                            style: const TextStyle(fontSize: 14)),
+                        const SizedBox(height: 4),
+                        Text(notification.timestamp,
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.grey)),
+
+                        if (notification.isActionable) ...[
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.orange,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                                child: const Text("Accept"),
+                              ),
+                              const SizedBox(width: 8),
+                              OutlinedButton(
+                                onPressed: () {},
+                                style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(color: Colors.grey),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                                child: const Text("Decline"),
+                              ),
+                            ],
                           ),
-                          child: const Text("Accept"),
-                        ),
-                        const SizedBox(width: 8),
-                        OutlinedButton(
-                          onPressed: () {
-                            // Decline action (MVP - no functionality)
-                          },
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Colors.grey),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
+                        ] else if (notification.isSponsored) ...[
+                          const SizedBox(height: 8),
+                          const Text(
+                            "SPONSORED",
+                            style: TextStyle(color: Colors.grey, fontSize: 12),
                           ),
-                          child: const Text("Decline"),
-                        ),
+                        ],
                       ],
-                    )
-                  : notification.isSponsored
-                      ? const Text(
-                          "SPONSORED",
-                          style: TextStyle(color: Colors.grey, fontSize: 12),
-                        )
-                      : const Icon(Icons.more_vert, color: Colors.grey),
-              onTap: () {
-                // Optional: Handle notification click
-              },
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },

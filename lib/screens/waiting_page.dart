@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:circl_up_app/screens/success_page.dart';
+import 'package:circl_up_app/screens/group_chat_page.dart';
 import 'package:flutter/material.dart';
 
 class WaitingPage extends StatefulWidget {
@@ -126,7 +127,13 @@ class _WaitingPageState extends State<WaitingPage> {
               ),
               const SizedBox(height: 30),
 
-              _buildCircleButton(Icons.chat_bubble, "Group chat", () {}),
+              // ✅ Navigate to GroupChatPage
+              _buildCircleButton(Icons.chat_bubble, "Group chat", () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const GroupChatPage()),
+                );
+              }),
 
               const Spacer(),
 
